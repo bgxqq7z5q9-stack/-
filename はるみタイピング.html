@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>敵リスト</title>
+  <style>
+    /* ページ全体のフォントと基本的なスタイル */
+    body {
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      color: #333;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background-color: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+      vertical-align: middle;
+    }
+    /* 画像とボタンを横並びにして中央揃えにするためのスタイル */
+    .action-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px; /* 画像とボタンの隙間 */
+    }
+    .enemy-icon {
+      width: 30px; /* アイコンのサイズ */
+      height: auto;
+    }
+    /* ボタンのスタイル */
+    button {
+      padding: 8px 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: serif; /* ボタンのフォント */
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>敵リスト</h1>
+  <table>
+    <tr>
+      
+      <th>敵名</th>
+      <th>難易度</th>
+      <th>ランク</th>
+      <th>アクション</th>
+    </tr>
+    <tr>
+      <td>スライム</td>
+      <td>超入門</td>
+      <td>ランクA</td>
+      <td class="action-cell">
+        <img src="icons/slime.png" alt="スライム" class="enemy-icon">
+        <button onclick="window.location.href='スライム.html'">挑戦</button>
+      </td>
+    </tr>
+    <tr>
+      <td>ゴブリン</td>
+      <td>超入門</td>
+      <td>ランクA</td>
+      <td class="action-cell">
+        <img src="icons/goblin.png" alt="ゴブリン" class="enemy-icon">
+        <button onclick="window.location.href='ゴブリン.html'">挑戦</button>
+      </td>
+    </tr>
+    <tr>
+      <td>がべーじ</td>
+      <td>入門</td>
+      <td>ランクA</td>
+      <td class="action-cell">
+        <img src="icons/garbage.png" alt="がべーじ" class="enemy-icon">
+        <button onclick="window.location.href='がべーじ.html'">挑戦</button>
+      </td>
+    </tr>
+    <tr>
+      <td>???未実装</td>
+      <td>入門</td>
+      <td>ランクA</td>
+      <td class="action-cell">
+        <img src="icons/unknown.png" alt="???未実装" class="enemy-icon">
+        <button onclick="window.location.href='???.html'">挑戦</button>
+      </td>
+    </tr>
+    <tr>
+      <td>アノニマス未実装</td>
+      <td>初級　まあ多分いける</td>
+      <td>ランクB</td>
+      <td class="action-cell">
+        <img src="icons/anonymous.png" alt="アノニマス未実装" class="enemy-icon">
+        <button onclick="window.location.href='アノニマス.html'">挑戦</button>
+      </td>
+    </tr>
+    <tr>
+      <td>ＧＯレム　指が疲れるかも</td>
+      <td></td>
+      <td>ランクC</td>
+      <td class="action-cell">
+        <img src="GOレム.png" alt="ＧＯレム" class="enemy-icon">
+        <button onclick="window.location.href='ゴーレム.html'">挑戦</button>
+      </td>
+    </tr>
+    <tr>
+      <td>堕天使未実装</td>
+      <td>中級　まだ余裕だと思う</td>
+      <td>ランクC</td>
+      <td class="action-cell">
+        <img src="デビルサンズ.png" alt="堕天使" class="enemy-icon">
+        <button onclick="window.location.href='デビルサンズ.html'">挑戦</button>
+      </td>
+    </tr>
+    <tr>
+      <td>死神　未実装</td>
+      <td>中級 これクリアしたらランクDに昇格</td>
+      <td>ランクC</td>
+      <td class="action-cell">
+        <img src="icons/reaper.png" alt="死神" class="enemy-icon">
+        <button onclick="window.location.href='死神.html'">挑戦</button>
+      </td>
+    </tr>
+    <tr>
+      <td>魔術師　未実装</td>
+      <td>上中級　普通に小学生レベル</td>
+      <td>ランクD</td>
+      <td class="action-cell">
+        <img src="icons/wizard.png" alt="魔術師　未実装" class="enemy-icon">
+        <button onclick="window.location.href='ゴブリン.html'">挑戦</button>
+      </td>
+    </tr>
+    <tr>
+      <td>魔法使い　未実装</td>
+      <td>中級　早くタイピングすることを心掛けよう</td>
+      <td>ランクD</td>
+      <td class="action-cell">
+        <img src="icons/sorcerer.png" alt="魔法使い　未実装" class="enemy-icon">
+        <button onclick="window.location.href='ゴブリン.html'">挑戦</button>
+      </td>
+    </tr>
+    <tr>
+      <td>バタフィー</td>
+      <td>上中級　魔法を使う妖精だからちょっとうざいかも</td>
+      <td>ランクE</td>
+      <td class="action-cell">
+        <img src="icons/butterfy.png" alt="バタフィー" class="enemy-icon">
+        <button onclick="window.location.href='バタフィー.html'">挑戦</button>
+      </td>
+    </tr>
+    <tr>
+  
+      <td>ブラックベイビー</td>
+      <td>中級　かわいい黒たまご</td>
+      <td>ランク</td>
+      <td class="action-cell">
+        <img src="ブラックベイビー.png" alt="ブラックベイビー" class="enemy-icon">
+        <button onclick="window.location.href='死神.html'">諦めろ</button>
+      </td>
+    </tr>
+    <!--りんご汁とかの部分をキャラの名前に変えて~~~~~.pngの~~~~の部分も書き換える -->
+    <tr>
+      <td>アクアベイビー</td>
+      <td>上中級</td>
+      <td>ランクF</td>
+      <td class="action-cell">
+        <img src="アクアベイビー.png" alt="アクアベイビー" class="enemy-icon">
+        <button onclick="window.location.href='アクアベイビー.html'">挑戦</button>
+      </td>
+    </tr>
+     <tr>
+      <td>ポイズンベイビー</td>
+      <td>上中級</td>
+      <td>ランクF</td>
+      <td class="action-cell">
+        <img src="ポイズンベイビー.png" alt="ポイズンベイビー" class="enemy-icon">
+        <button onclick="window.location.href='ポイズンベイビー.html'">挑戦</button>
+      </td>
+    </tr>
+     <tr>
+      <td>サンダーベイビー</td>
+      <td>上中級</td>
+      <td>ランクF+</td>
+      <td class="action-cell">
+        <img src="ポイズンベイビー.png" alt="ポイズンベイビー" class="enemy-icon">
+        <button onclick="window.location.href='ポイズンベイビー.html'">挑戦</button>
+      </td>
+    </tr>
+     <tr>
+      <td>レッドベイビー</td>
+      <td>上級</td>
+      <td>ランクF+</td>
+      <td class="action-cell">
+        <img src="レッドベイビー.png" alt="レッドベイビー" class="enemy-icon">
+        <button onclick="window.location.href='レッドベイビー.html'">挑戦</button>
+      </td>
+    </tr>
+     <tr>
+      <td>暗黒ベイビー</td>
+      <td>上級　中ボス</td>
+      <td>ランクG</td>
+      <td class="action-cell">
+        <img src="icons/goblin.png" alt="暗黒ベイビー" class="enemy-icon">
+        <button onclick="window.location.href='暗黒ベイビー.html'">挑戦</button>
+      </td>
+    </tr>
+     <tr>
+      <td>スーパースライム</td>
+      <td>上級</td>
+      <td>ランクG</td>
+      <td class="action-cell">
+        <img src="スーパースライム.png" alt="スーパースライム" class="enemy-icon">
+        <button onclick="window.location.href='スーパースライム.html'">挑戦</button>
+      </td>
+    </tr>
+     <tr>
+      <td>中二病</td>
+      <td>上級　...</td>
+      <td>ランクG</td>
+      <td class="action-cell">
+        <img src="icons/goblin.png" alt="ゴブリン" class="enemy-icon">
+        <button onclick="window.location.href='ゴブリン.html'">挑戦</button>
+      </td>
+    </tr>
+     <tr>
+      <td>復讐スライム</td>
+      <td>上級</td>
+      <td>ランクG+</td>
+      <td class="action-cell">
+        <img src="復讐スライム.png" alt="復讐スライム" class="enemy-icon">
+        <button onclick="window.location.href='復讐スライム.html'">挑戦</button>
+      </td>
+    </tr>
+     <tr>
+      <td>月三九丸</td>
+      <td>超上級　ラスボス</td>
+      <td>ランクH</td>
+      <td class="action-cell">
+        <img src="月三九丸.png" alt="月三九丸" class="enemy-icon">
+        <button onclick="window.location.href='月三.html'">挑戦</button>
+      </td>
+    </tr>
+     <tr>
+  </table>
+</body>
+</html>
