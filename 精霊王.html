@@ -1,0 +1,693 @@
+          
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>はるみタイピング</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: linear-gradient(#e0f7fa, #ffffff);
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: black;
+      opacity: 0;
+      transition: opacity 0.5s ease-in;
+    }
+    body.ready {
+      opacity: 1;
+    }
+    body.dragon-background {
+      background: url("doukutu.png") no-repeat center center fixed;
+      background-size: cover;
+    }
+    body.wizard-background {
+      background: url("") no-repeat center center fixed;
+      background-size: cover;
+    }
+    body.devilsans-background {
+      background: url("devilsans-background.png") no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .story-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      color: white;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-size: 2.5em;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      z-index: 10;
+    }
+
+    .story-text {
+      opacity: 0;
+      transition: opacity 2s ease-in-out;
+      padding: 20px;
+    }
+
+    .story-screen.fade-in {
+      opacity: 1;
+    }
+    .story-screen.fade-out {
+      opacity: 0;
+    }
+
+    .game-container {
+      max-width: 800px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      position: relative;
+      display: none;
+    }
+
+    .start-screen {
+      text-align: center;
+      padding: 50px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 600px;
+      width: 90%;
+      display: none;
+    }
+
+    .start-screen h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+    }
+
+    .start-screen button {
+      padding: 15px 30px;
+      font-size: 1.5em;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      background-color: #4CAF50;
+      color: white;
+      transition: background-color 0.3s;
+    }
+
+    .start-screen button:hover {
+      background-color: #45a049;
+    }
+
+    .character-images {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .character-images img {
+      width: 100px;
+      image-rendering: pixelated;
+    }
+
+    .damage-effect {
+      position: absolute;
+      font-size: 1.4em;
+      font-weight: bold;
+      color: red;
+      animation: float-up 0.8s ease-out forwards;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    @keyframes float-up {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-40px); }
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    #kana-text, #target-text, #combo {
+      text-align: center;
+      font-size: 1.2em;
+      margin: 8px 0;
+    }
+    #status {
+      text-align: center;
+      font-size: 1.8em;
+      font-weight: bold;
+      margin: 8px 0;
+    }
+
+    #target-text span {
+      color: #ccc;
+    }
+
+    #input {
+      opacity: 0;
+      position: absolute;
+    }
+
+    .hp-container {
+      margin: 10px 0;
+    }
+
+    progress {
+      width: 100%;
+      height: 20px;
+      appearance: none;
+      border-radius: 10px;
+      background: #eee;
+    }
+
+    progress::-webkit-progress-value {
+      background: #53a318;
+      border-radius: 10px;
+    }
+
+    .status-panel {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="story-screen" id="story-screen">
+    <div id="story-text" class="story-text"></div>
+  </div>
+
+  <div class="start-screen" id="start-screen">
+    <h1>🔥はるみタイピング🔥</h1>
+    <button id="start-button">ゲームスタート</button>
+  </div>
+
+  <div class="game-container" id="game-container">
+    <h1>🔥はるみタイピング🔥</h1>
+
+    <div class="status-panel">
+      <div>レベル: <span id="level">1</span></div>
+      <div>経験値: <span id="exp">0</span></div>
+      <div>ステージ: <span id="stage">3</span></div>
+    </div>
+
+    <div class="character-images">
+      <img id="player-image" src="hero.png" alt="あなた">
+      <img id="enemy-image" src="" alt="敵" />
+    </div>
+
+    <div id="enemy-name">??? が現れた！</div>
+    <div id="kana-text">お題：loading...</div>
+    <div id="target-text">loading...</div>
+
+    <input id="input" type="text" autocomplete="off" autofocus />
+
+    <div class="hp-container">
+      <div>あなたのHP: <span id="player-hp-text">80000</span></div>
+      <progress id="player-hp-bar" max="70000" value="70000"></progress>
+    </div>
+    <div class="hp-container">
+      <div>敵のHP: <span id="enemy-hp-text">100</span></div>
+      <progress id="enemy-hp-bar" max="100" value="100"></progress>
+    </div>
+
+    <div id="combo">コンボ: 0</div>
+    <div id="status"></div>
+  </div>
+
+  <audio id="background-music" src="精霊王.mp3" loop preload="auto"></audio>
+ <script>
+        // ページ読み込み完了後に実行
+        window.onload = function() {
+            const audio = document.getElementById('background-music');
+
+            // ページ上のどこかがクリック（タップ）された時のイベントリスナーを設定
+            document.body.addEventListener('click', function handleFirstClick() {
+                // 音楽の再生を試みる
+                audio.play().then(() => {
+                    console.log("ユーザー操作により音楽を再生しました。");
+                    // 再生に成功したら、これ以降自動再生ポリシーは適用されないため、
+                    // このイベントリスナーは削除する (一度だけ実行させる)
+                    document.body.removeEventListener('click', handleFirstClick);
+                }).catch(error => {
+                    // 再生失敗時（ブラウザによっては、まだユーザー操作が不十分な場合など）
+                    console.error("音楽の再生に失敗しました:", error);
+                });
+            });
+        };
+    </script>
+
+
+  <script>
+    const kanaToRomajiMap = {
+      あ:['a'],い:['i'],う:['u'],え:['e'],お:['o'],
+      か:['ka'],き:['ki'],く:['ku'],け:['ke'],こ:['ko'],
+      さ:['sa'],し:['shi','si'],す:['su'],せ:['se'],そ:['so'],
+      た:['ta'],ち:['chi','ti'],つ:['tsu','tu'],て:['te'],と:['to'],
+      な:['na'],に:['ni'],ぬ:['nu'],ね:['ne'],の:['no'],
+      は:['ha'],ひ:['hi'],ふ:['fu','hu'],へ:['he'],ほ:['ho'],
+      ま:['ma'],み:['mi'],む:['mu'],め:['me'],も:['mo'],
+      や:['ya'],ゆ:['yu'],よ:['yo'],
+      ら:['ra'],り:['ri'],る:['ru'],れ:['re'],ろ:['ro'],
+      わ:['wa'],を:['wo','o'],ん:['n','nn'],
+      が:['ga'],ぎ:['gi'],ぐ:['gu'],げ:['ge'],ご:['go'],
+      ざ:['za'],じ:['ji','zi'],ず:['zu','du'],ぜ:['ze'],ぞ:['zo'],
+      だ:['da'],ぢ:['ji','di'],づ:['zu','du'],で:['de'],ど:['do'],
+      ば:['ba'],び:['bi'],ぶ:['bu'],べ:['be'],ぼ:['bo'],
+      ぱ:['pa'],ぴ:['pi'],ぷ:['pu'],ぺ:['pe'],ぽ:['po'],
+      きゃ:['kya'],きゅ:['kyu'],きょ:['kyo'],
+      しゃ:['sha','sya'],しゅ:['shu','syu'],しょ:['sho','syo'],
+      ちゃ:['cha','tya'],ちゅ:['chu','tyu'],ちょ:['cho','tyo'],
+      にゃ:['nya'],にゅ:['nyu'],にょ:['nyo'],
+      ひゃ:['hya'],ひゅ:['hyu'],ひょ:['hyo'],
+      みゃ:['mya'],みゅ:['myu'],みょ:['myo'],
+      りゃ:['rya'],りゅ:['ryu'],りょ:['ryo'],
+      ぎゃ:['gya'],ぎゅ:['gyu'],ぎょ:['gyo'],
+      じゃ:['ja','jya','zya'],じゅ:['ju','jyu','zyu'],じょ:['jo','jyo','zyo'],
+      びゃ:['bya'],びゅ:['byu'],びょ:['byo'],
+      ぴゃ:['pya'],ぴゅ:['pyu'],ぴょ:['pyo'],
+    };
+
+    const enemies = [
+      { name: "精霊王", maxHp:35000 , img: "精霊王.png", attack: 400, exp: 10000 }
+    ];
+    
+    const texts = ["つきしまだいさんしょうがっこう", "はるみのれきし", "うめたてち", "あおぞら", "つきしま", "はるみはうみにかこまれている", "もんじゃはおいしいな","はるみとりとん","つきしまよんごうち","うめたてち","はるみちゅうがっこう","はるみそうごうこうこう","はるみふとう","はるみふとうこうえん","つきしまぐらうんど","れいめいばしこうえん","りんかいこうえん","はるみしょうねんぐらうんど","はるみふらっぐ","あるくほどう","とりとんぶりっじ"];
+    
+    const storyText = [
+      "20XX年、直下晴海地震が発生した。",
+      "人類は予想せず大打撃を受け、",
+      "その上、晴海モンスター訳してハルもんが現れた",
+      "ユウキはハルもんを倒すべく旅に出る！",
+    ];
+
+    const player = { hp: 70000, maxHp: 70000, attack: 400, level: 99, exp: 0, nextExp: 1000 };
+    let currentEnemy = {}, combo = 0, romajiList = [], romajiProgress = "";
+    let stage = 3;
+    let enemyAttackInterval;
+
+    const $ = id => document.getElementById(id);
+    
+    function convertKanaToRomajiList(kana) {
+        const result = [];
+        let i = 0;
+        while (i < kana.length) {
+            let found = false;
+
+            // 促音の処理: 「っ」＋次の文字の最初
+            if (kana[i] === 'っ' && i + 1 < kana.length) {
+                const nextKana = kana.slice(i + 1, i + 2);
+                const nextRomajiCandidates = kanaToRomajiMap[nextKana];
+                if (nextRomajiCandidates) {
+                    const firstRomajiChar = nextRomajiCandidates[0].charAt(0);
+                    result.push([firstRomajiChar, firstRomajiChar]);
+                    i++;
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                // 2文字かなの処理 (拗音など)
+                const two = kana.slice(i, i + 2);
+                if (kanaToRomajiMap[two]) {
+                    result.push(kanaToRomajiMap[two]);
+                    i += 2;
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                // 1文字かなの処理
+                const one = kana.slice(i, i + 1);
+                if (kanaToRomajiMap[one]) {
+                    result.push(kanaToRomajiMap[one]);
+                    i += 1;
+                    found = true;
+                }
+            }
+            
+            // 変換できない文字（漢字など）はスキップする
+            if (!found) {
+                i++;
+            }
+        }
+        return result;
+    }
+
+    function setNewEnemy() {
+      const enemyIndex = Math.floor(Math.random() * enemies.length);
+      currentEnemy = { ...enemies[enemyIndex] };
+      currentEnemy.hp = currentEnemy.maxHp;
+      $("enemy-image").src = currentEnemy.img;
+      $("enemy-hp-bar").max = currentEnemy.maxHp;
+      $("enemy-hp-bar").value = currentEnemy.hp;
+      $("enemy-hp-text").textContent = currentEnemy.hp;
+      $("enemy-name").textContent = `${currentEnemy.name} が現れた！`;
+      document.body.classList.remove("dragon-background", "wizard-background", "devilsans-background");
+      if (currentEnemy.name === "デビルサンズ") document.body.classList.add("devilsans-background");
+      resetEnemyAttackTimer();
+    }
+
+    function setNewText() {
+      const kana = texts[Math.floor(Math.random() * texts.length)];
+      $("kana-text").textContent = `お題：${kana}`;
+      romajiList = convertKanaToRomajiList(kana);
+      romajiProgress = "";
+      updateTargetText();
+    }
+    
+    function updateTargetText() {
+        if (romajiList.length === 0) {
+            $("target-text").innerHTML = "";
+            return;
+        }
+        let typedRomajiPart = '';
+        let remainingRomajiPart = '';
+        let typedIndex = 0;
+        let romajiIndex = 0;
+        while(romajiIndex < romajiList.length && typedIndex < romajiProgress.length) {
+            const romajiOptions = romajiList[romajiIndex];
+            const remainingTyped = romajiProgress.slice(typedIndex);
+            const bestMatch = romajiOptions.find(option => remainingTyped.startsWith(option));
+            if (bestMatch) {
+                typedRomajiPart += bestMatch;
+                typedIndex += bestMatch.length;
+                romajiIndex++;
+            } else {
+                const partialMatch = romajiOptions.find(option => option.startsWith(remainingTyped));
+                if (partialMatch) {
+                    typedRomajiPart += remainingTyped;
+                    typedIndex += remainingTyped.length;
+                }
+                break;
+            }
+        }
+        for (let i = romajiIndex; i < romajiList.length; i++) {
+            remainingRomajiPart += romajiList[i][0];
+        }
+        $("target-text").innerHTML = `<span style="color: #ccc;">${typedRomajiPart}</span>${remainingRomajiPart}`;
+    }
+
+    function showDamage(dmg, isPlayerDamage = false) {
+      const e = document.createElement("div");
+      e.className = "damage-effect";
+      e.textContent = `-${dmg}`;
+      if (isPlayerDamage) {
+        e.style.color = 'blue';
+        const playerImageRect = $("player-image").getBoundingClientRect();
+        e.style.top = `${playerImageRect.top + window.scrollY}px`;
+        e.style.left = `${playerImageRect.left + playerImageRect.width / 2 + window.scrollX}px`;
+      } else {
+        e.style.color = 'red';
+        const enemyImageRect = $("enemy-image").getBoundingClientRect();
+        e.style.top = `${enemyImageRect.top + window.scrollY}px`;
+        e.style.left = `${enemyImageRect.left + enemyImageRect.width / 2 + window.scrollX}px`;
+      }
+      document.body.appendChild(e);
+      e.addEventListener('animationend', () => e.remove());
+    }
+
+    function updateStatus() {
+      $("player-hp-text").textContent = player.hp;
+      $("player-hp-bar").value = player.hp;
+      $("enemy-hp-text").textContent = currentEnemy.hp;
+      $("enemy-hp-bar").value = currentEnemy.hp;
+      $("combo").textContent = `コンボ: ${combo}`;
+      $("level").textContent = player.level;
+      $("exp").textContent = player.exp;
+      $("stage").textContent = stage;
+    }
+    
+    function handleInput(e) {
+      const key = e.key.toLowerCase();
+      if (key === 'backspace') {
+          if (romajiProgress.length > 0) {
+              romajiProgress = romajiProgress.slice(0, -1);
+              updateTargetText();
+          }
+          return;
+      }
+      if (!/^[a-z]$/.test(key)) {
+          return;
+      }
+      if (romajiList.length === 0) {
+          return;
+      }
+      const currentRomajiOptions = romajiList[0];
+      const typedRomaji = romajiProgress + key;
+      const isCorrectPartial = currentRomajiOptions.some(option => option.startsWith(typedRomaji));
+
+      if (isCorrectPartial) {
+          romajiProgress = typedRomaji;
+          updateTargetText();
+          
+          const isCompleted = currentRomajiOptions.some(option => option === romajiProgress);
+          if (isCompleted) {
+              const damage = player.attack + combo * 5;
+              currentEnemy.hp = Math.max(currentEnemy.hp - damage, 0);
+              showDamage(damage);
+              romajiList.shift();
+              romajiProgress = "";
+              combo++;
+              player.exp += 10;
+              
+              if (romajiList.length === 0) {
+                  player.exp += currentEnemy.exp;
+                  if (currentEnemy.hp <= 0) {
+                      handleEnemyDefeat();
+                  }
+                  setNewText();
+              }
+          }
+      } else {
+          combo = 0;
+          $("status").textContent = "ミス！";
+          setTimeout(() => {
+              $("status").textContent = "";
+          }, 500);
+          romajiProgress = "";
+          updateTargetText();
+      }
+      updateStatus();
+      if (player.hp <= 0) {
+          handleGameOver();
+      }
+    }
+
+    function handleEnemyDefeat() {
+      $("status").textContent = `${currentEnemy.name} を倒した！`;
+      player.exp += currentEnemy.exp;
+      checkLevelUp();
+      if (stage < 1) {
+        stage++;
+        setTimeout(() => {
+          $("status").textContent = `次の敵が現れた！ ステージ${stage}`;
+          setNewEnemy();
+          setNewText();
+          updateStatus();
+        }, 1500);
+      } else {
+        handleGameClear();
+      }
+    }
+    
+    function handleGameOver() {
+      clearInterval(enemyAttackInterval);
+      $("status").textContent = "ゲームオーバー...";
+      $("input").disabled = true;
+      document.body.style.backgroundColor = "#333";
+      document.body.style.color = "#fff";
+    }
+
+    function handleGameClear() {
+      clearInterval(enemyAttackInterval);
+      $("status").textContent = `ゲームクリア！おめでとう！`;
+      $("input").disabled = true;
+      document.body.style.backgroundColor = "#fff";
+      document.body.style.color = "#000";
+    }
+
+    function checkLevelUp() {
+      if (player.exp >= player.nextExp) {
+        player.level++;
+        player.exp -= player.nextExp;
+        player.nextExp = Math.floor(player.nextExp * 1.5);
+        player.attack += 100;
+        $("status").textContent = `レベルアップ！ Lv.${player.level} になった！`;
+      }
+    }
+
+    function enemyAttack() {
+      if (currentEnemy.hp > 0 && player.hp > 0) {
+        const damage = 600; // デビルサンズの攻撃ダメージ
+        player.hp = Math.max(player.hp - damage, 0);
+        showDamage(damage, true);
+        updateStatus();
+        if (player.hp <= 0) {
+          handleGameOver();
+        }
+      }
+    }
+
+
+ function resetEnemyAttackTimer() {
+        clearInterval(enemyAttackInterval);
+        const intervalTime = 300; // 0.1秒
+        enemyAttackInterval = setInterval(enemyAttack, intervalTime);
+    }
+
+    
+    let storyTimeouts = [];
+    
+    // ...（中略）...
+
+    function skipStory() {
+        storyTimeouts.forEach(clearTimeout);
+        $("story-screen").classList.remove("fade-in");
+        $("story-screen").style.display = "none";
+        $("start-screen").style.display = "block";
+        document.removeEventListener("keydown", handleStorySkip);
+
+        // 背景画像を元に戻す
+        document.body.style.backgroundImage = "";
+        document.body.style.backgroundSize = "";
+        document.body.style.backgroundPosition = "";
+    }
+
+    // ...（中略）...
+
+    function showStory(index = 0) {
+      const storyScreen = $("story-screen");
+      const storyTextElement = $("story-text");
+
+      // ストーリーの背景を設定
+      document.body.style.backgroundImage = "url('harumi-haikei.png')";
+      document.body.style.backgroundSize = "cover";
+      document.body.style.backgroundPosition = "center center";
+      
+      storyScreen.style.display = "flex";
+      storyScreen.classList.add("fade-in");
+
+      if (index < storyText.length) {
+        storyTextElement.textContent = storyText[index];
+        storyTextElement.style.opacity = 1;
+        
+        storyTimeouts.push(setTimeout(() => {
+          storyTextElement.style.opacity = 0;
+        }, 3000));
+
+        storyTimeouts.push(setTimeout(() => {
+          showStory(index + 1);
+        }, 5000));
+      } else {
+        skipStory();
+      }
+    }
+
+    // ...（後略）...
+    
+
+function skipStory() {
+        storyTimeouts.forEach(clearTimeout);
+        $("story-screen").classList.remove("fade-in");
+        $("story-screen").style.display = "none";
+        $("start-screen").style.display = "block";
+        document.removeEventListener("keydown", handleStorySkip);
+
+        // 背景画像を元に戻す
+        document.body.style.backgroundImage = "";
+        document.body.style.backgroundSize = "";
+        document.body.style.backgroundPosition = "";
+    }
+
+  // ストーリーの背景を設定
+      document.body.style.backgroundImage = "url('harumi-haikei.png')";
+      document.body.style.backgroundSize = "cover";
+      document.body.style.backgroundPosition = "center center";
+    
+    function handleStorySkip(e) {
+        if (e.key.toLowerCase() === 's' && $("story-screen").style.display === "flex") {
+            skipStory();
+        }
+    }
+
+    function startGame() {
+      $("start-screen").style.display = "none";
+      $("game-container").style.display = "block";
+      setNewEnemy();
+      setNewText();
+      updateStatus();
+      $("input").focus();
+    }
+
+    function showStory(index = 0) {
+      const storyScreen = $("story-screen");
+      const storyTextElement = $("story-text");
+      
+      storyScreen.style.display = "flex";
+      storyScreen.classList.add("fade-in");
+
+      if (index < storyText.length) {
+        storyTextElement.textContent = storyText[index];
+        storyTextElement.style.opacity = 1;
+        
+        storyTimeouts.push(setTimeout(() => {
+          storyTextElement.style.opacity = 0;
+        }, 3000));
+
+        storyTimeouts.push(setTimeout(() => {
+          showStory(index + 1);
+        }, 5000));
+      } else {
+        skipStory();
+      }
+    }
+
+
+    function showStory(index = 0) {
+      const storyScreen = $("story-screen");
+      const storyTextElement = $("story-text");
+     
+      storyScreen.style.display = "flex";
+      storyScreen.classList.add("fade-in");
+
+      if (index < storyText.length) {
+        storyTextElement.textContent = storyText[index];
+        storyTextElement.style.opacity = 1;
+        
+        storyTimeouts.push(setTimeout(() => {
+          storyTextElement.style.opacity = 0;
+        }, 3000));
+
+        storyTimeouts.push(setTimeout(() => {
+          showStory(index + 1);
+        }, 5000));
+      } else {
+        skipStory();
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.body.classList.add("ready");
+      document.addEventListener("keydown", handleStorySkip);
+      showStory();
+      $("start-button").addEventListener("click", startGame);
+      $("input").addEventListener("keydown", handleInput);
+    });
+  </script>
+</body>
+</html>
