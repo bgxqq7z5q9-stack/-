@@ -1,3 +1,5 @@
 # はるみタイピングのリンク
+https://bgxqq7z5q9-stack.github.io/-/
 
-#はるみタイピングホームページのリンク
+はるみタイピングホームページのリンク
+https://bgxqq7z5q9-stack.github.io/sougou-homepage/
